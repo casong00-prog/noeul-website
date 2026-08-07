@@ -146,7 +146,7 @@ p { margin: 0; }
 
 .eyebrow {
   font-family: var(--font-ui);
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.6px;
@@ -220,29 +220,18 @@ p { margin: 0; }
 
 /* GitHub APK download — the emphasized route while Play review is pending */
 .store-badge--github { position: relative; }
-.store-badge__tag {
-  align-self: center;
-  margin-left: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  padding: 3px 9px;
-  border-radius: var(--radius-pill);
-  background: rgba(250, 248, 245, 0.18);
-  color: var(--glyph-cream);
-  line-height: 1.2;
-}
 
-/* Google Play — "coming soon" (kept visible but de-emphasized, not clickable) */
+/* Google Play — "coming soon" (kept visible but grayed out, not clickable) */
 .store-badge--soon {
   background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-strong);
+  color: var(--text-subtle);
+  border: 1px solid var(--border);
   cursor: default;
+  opacity: 0.7;
 }
 .store-badge--soon:hover { background: transparent; }
-.store-badge--soon .store-badge__sub { color: var(--text-tertiary); opacity: 1; }
-.store-badge--soon .store-badge__main { color: var(--text-secondary); }
+.store-badge--soon .store-badge__sub { color: var(--text-subtle); opacity: 1; }
+.store-badge--soon .store-badge__main { color: var(--text-subtle); }
 
 /* ---------- header / nav ---------- */
 .site-header {
@@ -346,11 +335,12 @@ p { margin: 0; }
   max-width: 14ch;
 }
 .hero__lead {
-  font-size: clamp(17px, 2.6vw, 19px);
+  font-size: clamp(13px, 2.3vw, 17px);
   color: var(--text-muted);
   margin-top: 20px;
   max-width: 46ch;
 }
+.hero__lead strong { color: var(--text); font-weight: 600; }
 .hero__ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
 .hero__note { margin-top: 18px; font-size: 14px; color: var(--text-subtle); }
 
@@ -716,6 +706,7 @@ p { margin: 0; }
 .download { text-align: center; }
 .download__title { font-size: clamp(28px, 5vw, 40px); max-width: 16ch; margin-inline: auto; }
 .download__badges { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 28px; }
+.download__alt { margin-top: 20px; }
 .download__note { margin-top: 16px; color: var(--text-tertiary); font-size: 14px; }
 
 /* ---------- FAQ ---------- */
