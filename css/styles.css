@@ -218,6 +218,32 @@ p { margin: 0; }
 .store-badge .store-badge__sub { display: block; font-size: 11px; opacity: 0.85; line-height: 1.2; }
 .store-badge .store-badge__main { display: block; font-size: 18px; font-weight: 600; line-height: 1.2; }
 
+/* GitHub APK download — the emphasized route while Play review is pending */
+.store-badge--github { position: relative; }
+.store-badge__tag {
+  align-self: center;
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: rgba(250, 248, 245, 0.18);
+  color: var(--glyph-cream);
+  line-height: 1.2;
+}
+
+/* Google Play — "coming soon" (kept visible but de-emphasized, not clickable) */
+.store-badge--soon {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-strong);
+  cursor: default;
+}
+.store-badge--soon:hover { background: transparent; }
+.store-badge--soon .store-badge__sub { color: var(--text-tertiary); opacity: 1; }
+.store-badge--soon .store-badge__main { color: var(--text-secondary); }
+
 /* ---------- header / nav ---------- */
 .site-header {
   position: sticky;
