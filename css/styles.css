@@ -345,6 +345,13 @@ p { margin: 0; }
 .hero__note { margin-top: 18px; font-size: 14px; color: var(--text-subtle); }
 
 .hero__visual { display: flex; justify-content: center; }
+.phone-link {
+  display: block;
+  cursor: pointer;
+  transition: transform 200ms var(--ease);
+}
+.phone-link:hover { transform: translateY(-4px); text-decoration: none; }
+.phone-link:hover .phone { box-shadow: 0 22px 40px rgba(27, 28, 28, 0.26); }
 .phone {
   position: relative;
   width: min(300px, 78vw);
