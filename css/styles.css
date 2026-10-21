@@ -334,6 +334,37 @@ p { margin: 0; }
   letter-spacing: -0.01em;
   max-width: 14ch;
 }
+/* rotating language in the headline: a stack of flashcards. The current language sits
+   in front, the next one waits faded right behind it, then rises up and over to the front. */
+.lang-cycle {
+  position: relative; display: inline-block; vertical-align: baseline; white-space: nowrap;
+  transition: width 500ms var(--ease);
+}
+.lang-cycle__sizer { visibility: hidden; font-weight: 600; }
+.hero__title:has(.lang-cycle) { padding-top: 0.2em; }
+.lang-cycle__word {
+  position: absolute; left: 0; bottom: 0; white-space: nowrap;
+  font-weight: 600; color: var(--text);
+  transform-origin: 0 100%;
+  transition: opacity 500ms var(--ease), transform 500ms var(--ease), color 500ms var(--ease);
+  opacity: 0; transform: translateY(-0.12em) scale(0.94);
+}
+.lang-cycle__word.is-front { opacity: 1; transform: none; z-index: 2; }
+.lang-cycle__word.is-next { opacity: 0; color: var(--text-tertiary); transform: translateY(-0.12em) scale(0.94); z-index: 1; }
+.lang-cycle__word.is-leaving { opacity: 0; transform: translateY(0.12em) scale(0.94); z-index: 1; }
+.lang-cycle__word.is-entering { animation: lang-card-in 650ms var(--ease); }
+@keyframes lang-card-in {
+  0%   { opacity: 0;    transform: translateY(-0.12em) scale(0.94); }
+  45%  { opacity: 0.9;  transform: translateY(-0.42em) scale(1.02); }
+  100% { opacity: 1;    transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lang-cycle, .lang-cycle__word { transition: opacity 400ms linear; }
+  .lang-cycle__word, .lang-cycle__word.is-next, .lang-cycle__word.is-leaving { transform: none; }
+  .lang-cycle__word.is-next { opacity: 0; }
+  .lang-cycle__word.is-entering { animation: none; }
+}
+
 .hero__lead {
   font-size: clamp(13px, 2.3vw, 17px);
   color: var(--text-muted);

@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="./css/styles.css?v=4" />
+  <link rel="stylesheet" href="./css/styles.css?v=7" />
 
   <!-- set theme before first paint to avoid a flash -->
   <script>
@@ -100,7 +100,8 @@
         <div class="hero__grid">
           <div class="hero__copy reveal">
             <p class="eyebrow">Uninterrupted flow, smart definitions, personalized to you.</p>
-            <h1 class="hero__title">Learn Korean the smart way.</h1>
+            <!-- LANGUAGES: add a language to data-langs and it joins the rotation -->
+            <h1 class="hero__title" aria-label="Learn Korean and Chinese the smart way.">Learn <span class="lang-cycle" data-langs="Korean, Chinese" aria-hidden="true"><span class="lang-cycle__sizer">Korean</span><span class="lang-cycle__word is-front">Korean</span></span><br /> the smart way.</h1>
             <p class="hero__lead">
               Grow your vocabulary by actually reading — in Korean, and now Chinese. Tap any word for an <strong>instant definition</strong>, or a
               <strong>smart in-context meaning</strong> when the sense bends. <strong>Focus mode</strong> keeps you in the flow,
@@ -482,7 +483,7 @@
     <img src="" alt="" />
   </div>
 
-  <script src="./js/main.js?v=4"></script>
+  <script src="./js/main.js?v=6"></script>
   <script src="./js/copy-email.js"></script>
 </body>
 </html>

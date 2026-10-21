@@ -101,6 +101,58 @@
     revealables.forEach(function (el) { el.classList.add('is-visible'); });
   }
 
+  /* ---------- headline: rotate through the languages Noeul teaches ---------- */
+  (function () {
+    var cycle = document.querySelector('.lang-cycle');
+    if (!cycle) { return; }
+    var langs = cycle.getAttribute('data-langs').split(',').map(function (l) { return l.trim(); }).filter(Boolean);
+    var title = cycle.closest('h1');
+    if (title) {
+      var list = langs.length > 1 ? langs.slice(0, -1).join(', ') + ' and ' + langs[langs.length - 1] : langs[0];
+      title.setAttribute('aria-label', 'Learn ' + list + ' the smart way.');
+    }
+    if (langs.length < 2) { return; }
+
+    var sizer = cycle.querySelector('.lang-cycle__sizer');
+    cycle.querySelectorAll('.lang-cycle__word').forEach(function (w) { w.remove(); });
+    var words = langs.map(function (l) {
+      var w = document.createElement('span');
+      w.className = 'lang-cycle__word';
+      w.textContent = l;
+      cycle.appendChild(w);
+      return w;
+    });
+    var i = 0;
+
+    function show(n) {
+      var prev = i;
+      i = n % words.length;
+      var next = (i + 1) % words.length;
+      words.forEach(function (w, k) {
+        w.classList.toggle('is-front', k === i);
+        w.classList.toggle('is-next', k === next);
+        // with two languages the outgoing word is also the next one: it drops back behind instead
+        w.classList.toggle('is-leaving', k === prev && k !== i && k !== next);
+      });
+      // the new front word rises up and over the old one, like turning a flashcard
+      var front = words[i];
+      front.classList.remove('is-entering');
+      if (prev !== i) { void front.offsetWidth; front.classList.add('is-entering'); }
+      sizer.textContent = langs[i];
+      cycle.style.width = words[i].offsetWidth + 'px';
+    }
+    show(0);
+    // re-measure once the display font has loaded, and on resize
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(function () { show(i); }); }
+    window.addEventListener('resize', function () { cycle.style.width = words[i].offsetWidth + 'px'; });
+
+    var timer = null;
+    function start() { if (!timer) { timer = setInterval(function () { show(i + 1); }, 2800); } }
+    function stop() { clearInterval(timer); timer = null; }
+    document.addEventListener('visibilitychange', function () { if (document.hidden) { stop(); } else { start(); } });
+    start();
+  })();
+
   /* ---------- light / dark theme toggle ---------- */
   (function () {
     var root = document.documentElement;
