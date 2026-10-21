@@ -350,11 +350,11 @@ p { margin: 0; }
   opacity: 0; transform: translateY(-0.12em) scale(0.94);
 }
 .lang-cycle__word.is-front { opacity: 1; transform: none; z-index: 2; }
-.lang-cycle__word.is-next { opacity: 0.14; color: var(--text-tertiary); transform: translateY(-0.12em) scale(0.94); z-index: 1; }
+.lang-cycle__word.is-next { opacity: 0; color: var(--text-tertiary); transform: translateY(-0.12em) scale(0.94); z-index: 1; }
 .lang-cycle__word.is-leaving { opacity: 0; transform: translateY(0.12em) scale(0.94); z-index: 1; }
 .lang-cycle__word.is-entering { animation: lang-card-in 650ms var(--ease); }
 @keyframes lang-card-in {
-  0%   { opacity: 0.14; transform: translateY(-0.12em) scale(0.94); }
+  0%   { opacity: 0;    transform: translateY(-0.12em) scale(0.94); }
   45%  { opacity: 0.9;  transform: translateY(-0.42em) scale(1.02); }
   100% { opacity: 1;    transform: none; }
 }
