@@ -131,9 +131,13 @@
       words.forEach(function (w, k) {
         w.classList.toggle('is-front', k === i);
         w.classList.toggle('is-next', k === next);
-        // with two languages the outgoing word is also the next one: it shrinks back behind instead
+        // with two languages the outgoing word is also the next one: it drops back behind instead
         w.classList.toggle('is-leaving', k === prev && k !== i && k !== next);
       });
+      // the new front word rises up and over the old one, like turning a flashcard
+      var front = words[i];
+      front.classList.remove('is-entering');
+      if (prev !== i) { void front.offsetWidth; front.classList.add('is-entering'); }
       sizer.textContent = langs[i];
       cycle.style.width = words[i].offsetWidth + 'px';
     }
