@@ -139,7 +139,10 @@
     var scrim = document.getElementById('sheet-scrim');
     var pctEl = document.getElementById('reader-pct');
     var fillEl = document.getElementById('reader-progress-fill');
+    var badgeEl = document.getElementById('words-badge');
     var focusBtn = reader.querySelector('.reader__focus-btn');
+    var listenBtn = reader.querySelector('.reader__listen-btn');
+    var wordsBtn = reader.querySelector('.reader__words-btn');
     var prevBtn = reader.querySelector('.reader__pageflip--prev');
     var nextBtn = reader.querySelector('.reader__pageflip--next');
     var tabs = document.querySelectorAll('.reader-tab');
@@ -151,180 +154,181 @@
     var wordsBody = document.getElementById('wordsview-body');
     var wordsTabs = reader.querySelectorAll('.wordsview__tab');
     var hintEl = document.getElementById('demo-hint');
+    var listenbar = document.getElementById('listenbar');
+    var captionEl = document.getElementById('listen-caption');
+    var speedEl = document.getElementById('listen-speed');
 
     var HINTS = {
-      read: 'Tip: tap any <span class="demo-hint__word">underlined</span> word.',
+      read: 'Tip: tap any <span class="demo-hint__word">underlined</span> word, or press and hold a sentence.',
       focus: 'Tip: swipe, tap the arrows, or tap a sentence to move.',
+      listen: 'Tip: press play. Turn on translations to hear each line in English too.',
       words: 'Tip: save a suggestion — it joins your list.'
     };
 
     var ICON = {
-      save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>',
-      meaning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.6 3.8L17.5 9l-3.9 1.2L12 15l-1.6-4.8L6.5 9l3.9-1.2z"/><path d="M18 15l.8 1.9L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.9z"/></svg>',
-      translate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h5.5c-.3 4.2-2 7.2-5.5 9"/><path d="M12 3.5v11.5M12 8.5h2.8"/><path d="M13.5 20.5l3.75-9 3.75 9M14.9 17.3h4.7"/></svg>'
+      save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M7 3.5h10a1 1 0 0 1 1 1v16l-6-3.6-6 3.6v-16a1 1 0 0 1 1-1z"/></svg>',
+      saved: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 3.5h10a1 1 0 0 1 1 1v16l-6-3.6-6 3.6v-16a1 1 0 0 1 1-1z"/></svg>',
+      meaning: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25z"/></svg>',
+      translate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5h5.5c-.3 4.2-2 7.2-5.5 9"/><path d="M12 3.5v11.5M12 8.5h2.8"/><path d="M13.5 20.5l3.75-9 3.75 9M14.9 17.3h4.7"/></svg>'
     };
 
     var WORDS = {
       cheonjae: {
-        hw: '천재', hanja: '天才', roman: 'cheonjae', pos: 'NOUN', def: 'genius',
-        aiDef: 'genius; talented person',
-        ai: 'Here 천재 means "genius" or "a person of exceptional talent." In this line it refers to a brilliant person whose potential has been stifled — a "genius who has become taxidermied," like a preserved specimen. The word keeps its ordinary sense, but the poetic context stresses what is lost when such talent is no longer alive.',
-        sentence: '‘박제(剝製)가 되어 버린 천재’를 아시오?',
-        trans: '"Do you know of a genius who has become a stuffed specimen?"',
+        hw: '천재', hanja: '天才', roman: 'cheonjae', pos: 'Noun', def: 'genius', wt: 'genius; prodigy',
+        ai: 'Here 천재 is a brilliant person whose gift has gone still — a "genius turned taxidermy," preserved but no longer alive.',
         related: [
-          { k: '천재적', h: '天才的', m: 'genius (adj.)' },
-          { k: '천재지변', h: '天災地變', m: 'natural disaster' },
-          { k: '천재성', h: '天才性', m: 'giftedness' }
+          { k: '천재적', h: '天才的', m: 'of genius', known: true },
+          { k: '천국', h: '天國', m: 'heaven', known: true },
+          { k: '재능', h: '才能', m: 'talent' }
         ],
-        roots: [ { c: '天', m: '하늘 천', e: 'sky' }, { c: '才', m: '재주 재', e: 'talent' } ]
+        roots: [ { c: '天', m: '하늘 천', e: 'sky, heaven' }, { c: '才', m: '재주 재', e: 'talent' } ]
       },
       yeonae: {
-        hw: '연애', hanja: '戀愛', roman: 'yeonae', pos: 'NOUN', def: 'love; romance',
-        aiDef: 'romantic love; dating',
-        ai: 'In this line 연애 means romantic love. The narrator remarks that in his listless state even romance strikes him as amusing — a detached, ironic pleasure rather than genuine feeling.',
-        sentence: '이런 때 연애까지가 유쾌하오.',
-        trans: 'At times like this, even romance feels pleasant.',
-        related: [
-          { k: '연애편지', h: '戀愛便紙', m: 'love letter' },
-          { k: '연애결혼', h: '戀愛結婚', m: 'love marriage' }
-        ],
+        hw: '연애', hanja: '戀愛', roman: 'yeonae', pos: 'Noun', def: 'love; romance', wt: 'dating; a romance',
+        ai: 'Romantic love. The narrator is so listless that even romance only amuses him — an ironic, detached pleasure.',
+        related: [ { k: '사랑', h: '', m: 'love', known: true }, { k: '애정', h: '愛情', m: 'affection' } ],
         roots: [ { c: '戀', m: '그리워할 련', e: 'to long for' }, { c: '愛', m: '사랑 애', e: 'love' } ]
       },
       bakje: {
-        hw: '박제', hanja: '剝製', roman: 'bakje', pos: 'NOUN', def: 'taxidermy; a stuffed specimen',
-        aiDef: 'a stuffed, preserved specimen',
-        ai: 'In this famous opening, 박제 (a taxidermied animal) is a metaphor: a once-living talent preserved but lifeless — brilliance that has been hollowed out and put on display.',
-        sentence: '‘박제(剝製)가 되어 버린 천재’를 아시오?',
-        trans: '"Do you know of a genius who has become a stuffed specimen?"',
-        related: [],
+        hw: '박제', hanja: '剝製', roman: 'bakje', pos: 'Noun', def: 'taxidermy; a stuffed specimen', wt: 'stuffed animal',
+        ai: 'A metaphor in this famous opening: talent that was once alive, now preserved and hollow — kept for display.',
+        related: [ { k: '제품', h: '製品', m: 'product', known: true }, { k: '제작', h: '製作', m: 'production' } ],
         roots: [ { c: '剝', m: '벗길 박', e: 'to strip' }, { c: '製', m: '지을 제', e: 'to make' } ]
       },
       yukwae: {
-        hw: '유쾌', hanja: '愉快', roman: 'yukwae', pos: 'ADJ', def: 'cheerful; pleasant',
-        aiDef: 'cheerful; in good spirits',
-        ai: 'Here 유쾌하오 is an old, formal way of saying "I feel good / cheerful." The archaic -오 ending gives the narrator his distinctive dry, self-satisfied voice.',
-        sentence: '나는 유쾌하오.',
-        trans: 'I feel cheerful.',
-        related: [],
-        roots: [ { c: '愉', m: '즐거울 유', e: 'joyful' }, { c: '快', m: '쾌할 쾌', e: 'pleased' } ]
+        hw: '유쾌', hanja: '愉快', roman: 'yukwae', pos: 'Noun', def: 'cheerfulness; pleasantness', wt: 'pleasant',
+        ai: '유쾌하오 is an old, formal "I feel cheerful." The archaic -오 ending gives the narrator his dry, self-satisfied voice.',
+        related: [ { k: '불쾌', h: '不快', m: 'displeasure' }, { k: '상쾌', h: '爽快', m: 'refreshing', known: true } ],
+        roots: [ { c: '愉', m: '즐거울 유', e: 'joyful' }, { c: '快', m: '쾌할 쾌', e: 'pleased, quick' } ]
       },
       baekji: {
-        hw: '백지', hanja: '白紙', roman: 'baekji', pos: 'NOUN', def: 'blank paper',
-        aiDef: 'a blank sheet of paper',
-        ai: 'Literally "white paper." The narrator means his mind goes clear and blank — a fresh page — whenever the nicotine takes effect.',
-        sentence: '머릿속에 으레 백지가 준비되는 법이오.',
-        trans: 'A blank sheet is invariably readied in my mind.',
-        related: [],
+        hw: '백지', hanja: '白紙', roman: 'baekji', pos: 'Noun', def: 'blank paper', wt: 'a blank sheet',
+        ai: 'Literally "white paper": his mind goes clear and blank — a fresh page — whenever the nicotine takes hold.',
+        related: [ { k: '종이', h: '', m: 'paper', known: true }, { k: '백색', h: '白色', m: 'white' } ],
         roots: [ { c: '白', m: '흰 백', e: 'white' }, { c: '紙', m: '종이 지', e: 'paper' } ]
       }
     };
 
-    var OPENING = {
-      k: '‘박제(剝製)가 되어 버린 천재’를 아시오? 나는 유쾌하오.',
-      e: '"Do you know of a genius who has become a stuffed specimen?" As for me — I feel quite cheerful.'
-    };
-
-    // Suggested words: the model flags words it's unsure the reader knows AND
-    // that the book won't teach by repetition. Badges mirror the app's reasons.
-    var CANDIDATES = [
-      {
-        id: 'eunhwa', hw: '은화', hanja: '銀貨', gloss: 'silver coin',
-        reason: 'Rare in this book',
-        sentence: '육신이 흐느적흐느적하도록 피로했을 때만 정신이 은화처럼 맑소.'
-      },
-      {
-        id: 'poseok', hw: '포석', hanja: '布石', gloss: 'opening moves; groundwork',
-        reason: 'Worth a closer look',
-        sentence: '그 위에다 나는 위트와 파라독스를 바둑 포석처럼 늘어 놓소.'
-      },
-      {
-        id: 'hoetbae', hw: '횟배', hanja: '', gloss: 'roundworm colic; bellyache',
-        reason: 'New here',
-        sentence: '니코틴이 내 횟배 앓는 뱃속으로 스미면 머릿속에 으레 백지가 준비되는 법이오.'
-      }
+    // whole-sentence translations, in reading order (press-and-hold, Listen captions)
+    var TRANS = [
+      '"Do you know the genius who became a stuffed specimen?"',
+      'I feel cheerful.',
+      'At times like this, even romance is cheerful.',
+      'Only when my body is so tired it goes limp is my mind as clear as a silver coin.',
+      'When nicotine seeps into my worm-sick belly, a blank sheet is always laid out in my head.',
+      'On it I set out wit and paradox like the opening stones of a game of baduk.',
+      'It is a terrible disease of common sense.',
+      'I also plan a life with a woman.',
+      'Someone who has glanced at the height of an intellect grown awkward even at the art of love — a kind of mental drifter, so to speak.'
     ];
 
+    // Suggested words: ones the app isn't sure you know AND that the book won't teach by repetition.
+    var CANDIDATES = [
+      { id: 'eunhwa', hw: '은화', hanja: '銀貨', gloss: 'silver coin', reason: 'Rare in this book',
+        sentence: '육신이 흐느적흐느적하도록 피로했을 때만 정신이 은화처럼 맑소.' },
+      { id: 'poseok', hw: '포석', hanja: '布石', gloss: 'opening moves; groundwork', reason: 'Worth a closer look',
+        sentence: '그 위에다 나는 위트와 파라독스를 바둑 포석처럼 늘어 놓소.' },
+      { id: 'hoetbae', hw: '횟배', hanja: '', gloss: 'roundworm colic; bellyache', reason: 'New here',
+        sentence: '니코틴이 내 횟배 앓는 뱃속으로 스미면 머릿속에 으레 백지가 준비되는 법이오.' }
+    ];
+    var LEARNED_START = [ { hw: '정신', hanja: '精神', gloss: 'mind; spirit' } ];
+
     var current = null;      // current word id
+    var view = 'define';     // define | roots | ai | translate
+    var rootOn = -1;         // highlighted hanja in the roots view
     var page = 0;
     var mode = 'read';
-    var saved = { yeonae: true };          // words saved from the lookup sheet
     var savedList = ['yeonae'];            // newest-first ids (WORDS or CANDIDATES)
-    var candSaved = {};                    // suggestions saved from the panel
+    var fade = { yeonae: 2 };              // saved word -> fade step (0 solid … 6 learned)
+    var learned = LEARNED_START.slice();
+    var candSaved = {};
     var wtab = 'saved';
     var beam = 0;
     var aiToken = 0;
 
-    /* ---- rendering ---- */
-    function head(w) {
-      return '<div class="sheet__head"><span class="sheet__hw">' + w.hw + '</span>' +
-        (w.hanja ? '<span class="sheet__hanja">' + w.hanja + '</span>' : '') +
-        '<span class="sheet__roman">' + w.roman + '</span></div>';
+    function isSaved(id) { return savedList.indexOf(id) !== -1; }
+
+    /* ---- marks in the text: saved words are ink blocks that fade ---- */
+    function paintMarks() {
+      track.querySelectorAll('.rw').forEach(function (b) {
+        var id = b.getAttribute('data-word');
+        var on = isSaved(id);
+        var step = fade[id] || 0;
+        b.classList.toggle('is-saved', on && step === 0);
+        if (on && step > 0) { b.setAttribute('data-fade', step); } else { b.removeAttribute('data-fade'); }
+      });
+      if (badgeEl) {
+        badgeEl.textContent = savedList.length;
+        badgeEl.hidden = savedList.length === 0;
+      }
     }
-    function actions(active, id) {
-      var isSaved = !!saved[id];
-      return '<div class="sheet__actions">' +
-        '<button class="sheet__btn' + (isSaved ? ' is-active' : '') + '" data-act="save">' + ICON.save + (isSaved ? ' SAVED' : ' SAVE') + '</button>' +
-        '<button class="sheet__btn' + (active === 'meaning' ? ' is-active' : '') + '" data-act="meaning">' + ICON.meaning + ' MEANING</button>' +
-        '<button class="sheet__btn' + (active === 'translate' ? ' is-active' : '') + '" data-act="translate">' + ICON.translate + ' TRANSLATE</button>' +
-        '</div>';
-    }
-    function hint(w, target, label) {
-      if (target === 'roots' && !(w.roots && w.roots.length)) { return ''; }
-      return '<button class="sheet__hint" data-act="' + target + '">' + label + '</button>';
+    // each page you see a saved word on (without looking it up) takes it one step closer to Learned
+    function fadeOnPage(p) {
+      var seen = {};
+      pages[p].querySelectorAll('.rw').forEach(function (b) { seen[b.getAttribute('data-word')] = true; });
+      savedList.slice().forEach(function (id) {
+        if (!seen[id] || !WORDS[id]) { return; }
+        fade[id] = (fade[id] || 0) + 1;
+        if (fade[id] >= 6) {
+          savedList.splice(savedList.indexOf(id), 1);
+          delete fade[id];
+          learned.unshift({ hw: WORDS[id].hw, hanja: WORDS[id].hanja, gloss: WORDS[id].def });
+        }
+      });
+      paintMarks();
     }
 
-    function renderDefine(id) {
-      var w = WORDS[id];
-      sheet.innerHTML = '<div class="sheet__handle" data-act="close"></div>' +
-        hint(w, 'roots', '▲ Slide up for roots') +
-        head(w) +
-        '<div class="sheet__defline"><span class="sheet__pos">' + w.pos + '</span><span class="sheet__def">' + w.def + '</span></div>' +
-        actions('', id);
+    /* ---- sheet rendering ---- */
+    function head(w) {
+      var hanja = '';
+      if (w.hanja) {
+        hanja = '<span class="sheet__hanja">' + w.hanja.split('').map(function (c, i) {
+          return '<button type="button" data-act="char" data-i="' + i + '" class="' + (view === 'roots' && rootOn === i ? 'is-on' : '') +
+            '" aria-label="Look up ' + c + '">' + c + '</button>';
+        }).join('') + '</span>';
+      }
+      return '<button class="sheet__handle" type="button" data-act="handle" aria-label="' + (view === 'roots' ? 'Hide roots' : 'Show roots') + '"></button>' +
+        '<div class="sheet__head"><span class="sheet__hw">' + w.hw + '</span>' + hanja + '</div>' +
+        '<span class="sheet__roman">' + w.roman + '</span>' +
+        '<div class="sheet__defline"><span class="sheet__pos">' + w.pos + '</span><span class="sheet__def">' + w.def + '</span></div>';
     }
-    function renderRoots(id) {
-      var w = WORDS[id];
-      var related = w.related.length ? '<div class="sheet__related">' + w.related.map(function (r) {
-        return '<div class="sheet__related-item"><span class="k">' + r.k + '</span><span class="h">' + r.h + '</span><span class="m">' + r.m + '</span><button class="sheet__add" aria-label="Add ' + r.k + '">+</button></div>';
-      }).join('') + '</div>' : '';
-      var roots = '<div class="sheet__roots">' + w.roots.map(function (c) {
-        return '<div class="sheet__root"><span class="sheet__root-glyph">' + c.c + '</span><span><span class="rm">' + c.m + '</span><br><span class="re">' + c.e + '</span></span></div>';
-      }).join('') + '</div>';
-      sheet.innerHTML = '<div class="sheet__handle" data-act="close"></div>' +
-        hint(w, 'define', '▼ Slide down') +
-        head(w) +
-        '<div class="sheet__defline"><span class="sheet__pos">' + w.pos + '</span><span class="sheet__def">' + w.def + '</span></div>' +
-        related +
-        '<p class="sheet__label">Root characters</p>' + roots +
-        actions('', id);
+    function actions(id) {
+      var s = isSaved(id);
+      return '<div class="sheet__actions">' +
+        '<button class="sheet__btn' + (s ? ' is-active' : '') + '" data-act="save">' + (s ? ICON.saved + ' Saved' : ICON.save + ' Save') + '</button>' +
+        '<button class="sheet__btn' + (view === 'ai' ? ' is-active' : '') + '" data-act="meaning">' + ICON.meaning + ' Meaning<sup>AI</sup></button>' +
+        '<button class="sheet__btn' + (view === 'translate' ? ' is-active' : '') + '" data-act="translate">' + ICON.translate + ' Translate</button>' +
+        '</div>';
     }
-    function renderAi(id) {
-      var w = WORDS[id];
-      sheet.innerHTML = '<div class="sheet__handle" data-act="close"></div>' +
-        hint(w, 'roots', '▲ Slide up for roots') +
-        head(w) +
-        '<div class="sheet__defline"><span class="sheet__def sheet__def--big">' + (w.aiDef || w.def) + '</span></div>' +
-        '<div class="sheet__divider"></div>' +
-        '<p class="sheet__label">In this sentence</p>' +
-        '<div class="sheet__ai-slot"><div class="sheet__loading"><span></span><span></span><span></span></div></div>' +
-        actions('meaning', id);
-      var slot = sheet.querySelector('.sheet__ai-slot');
-      var token = ++aiToken;
-      setTimeout(function () {
-        if (token === aiToken && slot) { slot.innerHTML = '<p class="sheet__ai">' + w.ai + '</p>'; }
-      }, 720);
+    function render() {
+      var w = WORDS[current];
+      if (!w) { return; }
+      var body = '';
+      if (view === 'translate') {
+        body = '<div class="sheet__inline"><small>English</small>' + w.wt + '</div>';
+      } else if (view === 'ai') {
+        body = '<div class="sheet__divider"></div><p class="sheet__label">In this sentence</p>' +
+          '<div class="sheet__ai-slot"><div class="sheet__loading"><span></span><span></span><span></span></div></div>';
+      } else if (view === 'roots') {
+        body = '<div class="sheet__divider"></div><p class="sheet__label">Characters</p><div class="sheet__roots">' +
+          w.roots.map(function (c, i) {
+            return '<div class="sheet__root' + (rootOn === i ? ' is-on' : '') + '"><span class="sheet__root-glyph">' + c.c +
+              '</span><span><span class="rm">' + c.m + '</span><br><span class="re">' + c.e + '</span></span></div>';
+          }).join('') + '</div>' +
+          (w.related.length ? '<p class="sheet__label" style="margin-top:14px">Related words</p>' + w.related.map(function (r) {
+            return '<div class="sheet__related-item"><span class="k">' + r.k + '</span>' + (r.h ? '<span class="h">' + r.h + '</span>' : '') +
+              '<span class="m">' + r.m + '</span>' + (r.known ? '<span class="known">Known</span>' : '') + '</div>';
+          }).join('') : '');
+      }
+      sheet.innerHTML = head(w) + body + actions(current);
+      if (view === 'ai') {
+        var slot = sheet.querySelector('.sheet__ai-slot');
+        var token = ++aiToken;
+        setTimeout(function () {
+          if (token === aiToken && slot) { slot.innerHTML = '<p class="sheet__ai">' + w.ai + '</p>'; }
+        }, 650);
+      }
     }
-    function renderTranslate(id) {
-      var w = WORDS[id];
-      sheet.innerHTML = '<div class="sheet__handle" data-act="close"></div>' +
-        head(w) +
-        '<div class="sheet__divider"></div>' +
-        '<p class="sheet__label">Sentence</p>' +
-        '<p class="sheet__ai" style="font-family:var(--font-kr)">' + w.sentence + '</p>' +
-        '<p class="sheet__label" style="margin-top:12px">Translation</p>' +
-        '<p class="sheet__ai">' + w.trans + '</p>' +
-        actions('translate', id);
-    }
-    var VIEWS = { define: renderDefine, roots: renderRoots, ai: renderAi, translate: renderTranslate };
 
     /* ---- sheet open / close ---- */
     function openSheet() {
@@ -338,40 +342,42 @@
       scrim.hidden = true;
       current = null;
       highlight(null);
+      track.querySelectorAll('.rs.is-selected').forEach(function (s) { s.classList.remove('is-selected'); });
     }
-    function highlight(id) {
-      track.querySelectorAll('.rw').forEach(function (b) {
-        b.classList.toggle('is-active', id != null && b.getAttribute('data-word') === id);
-      });
+    function highlight(btn) {
+      track.querySelectorAll('.rw').forEach(function (b) { b.classList.toggle('is-active', b === btn); });
     }
-    function openWord(id, view) {
+    function openWord(id, v, btn) {
       if (!WORDS[id]) { return; }
-      current = id;
-      (VIEWS[view] || renderDefine)(id);
-      highlight(id);
+      current = id; view = v || 'define'; rootOn = view === 'roots' ? 0 : -1;
+      render();
+      highlight(btn || track.querySelector('.rw[data-word="' + id + '"]'));
       openSheet();
     }
-    function openSentence() {
+    function openSentence(idx) {
       current = null;
       highlight(null);
-      sheet.innerHTML = '<div class="sheet__handle" data-act="close"></div>' +
+      var s = sentences[idx];
+      if (s) { s.classList.add('is-selected'); }
+      sheet.innerHTML = '<button class="sheet__handle" type="button" data-act="close" aria-label="Close"></button>' +
         '<p class="sheet__label">Sentence</p>' +
-        '<p class="sheet__ai" style="font-family:var(--font-kr);font-size:15px">' + OPENING.k + '</p>' +
-        '<div class="sheet__divider"></div>' +
-        '<p class="sheet__label">Translation</p>' +
-        '<p class="sheet__ai">' + OPENING.e + '</p>';
+        '<p class="sheet__ai" style="font-family:var(--font-kr);font-size:15px">' + (s ? s.textContent : '') + '</p>' +
+        '<div class="sheet__inline"><small>Translation</small>' + (TRANS[idx] || '') + '</div>';
       openSheet();
     }
 
     /* ---- paging ---- */
     function setPage(n) {
-      page = Math.max(0, Math.min(pages.length - 1, n));
+      var next = Math.max(0, Math.min(pages.length - 1, n));
+      var changed = next !== page;
+      page = next;
       track.style.transform = 'translateX(' + (-page * 100) + '%)';
       var pct = [4, 9][page] || 4;
       if (pctEl) { pctEl.textContent = pct + '%'; }
       if (fillEl) { fillEl.style.width = pct + '%'; }
       if (prevBtn) { prevBtn.hidden = page === 0; }
       if (nextBtn) { nextBtn.hidden = page === pages.length - 1; }
+      if (changed) { fadeOnPage(page); if (mode === 'words') { renderWords(); } }
     }
 
     /* ---- focus mode: the sentence beam ---- */
@@ -388,11 +394,15 @@
     function setBeam(i) {
       beam = Math.max(0, Math.min(sentences.length - 1, i));
       sentences.forEach(function (s, idx) { s.classList.toggle('is-beam', idx === beam); });
-      if (beamPosEl) { beamPosEl.textContent = (beam + 1) + ' / ' + sentences.length; }
-      positionBeam();
+      if (beamPosEl) { beamPosEl.textContent = 'Sentence ' + (beam + 1) + ' of ' + sentences.length; }
+      if (mode === 'focus') { positionBeam(); }
+      if (mode === 'listen') {
+        var p = pageIndexOf(beam);
+        if (p !== -1 && p !== page) { setPage(p); }
+        showCaption();
+      }
     }
-    // Keep the beamed sentence in the lower half of the screen (one-hand reach):
-    // scroll the continuous text so the sentence sits ~55% down the viewport.
+    // keep the beamed sentence in the lower half of the screen (one-hand reach)
     function positionBeam(instant) {
       var s = sentences[beam];
       if (!s) { return; }
@@ -403,26 +413,89 @@
       sentences.forEach(function (s) { s.classList.remove('is-beam'); });
     }
 
-    /* ---- your-words panel: saved + suggested ---- */
-    function savedEntries() {
-      return savedList.map(function (id) {
-        if (WORDS[id]) {
-          var w = WORDS[id];
-          return { hw: w.hw, hanja: w.hanja, gloss: w.def };
-        }
-        var c = null;
-        CANDIDATES.forEach(function (x) { if (x.id === id) { c = x; } });
-        return c ? { hw: c.hw, hanja: c.hanja, gloss: c.gloss } : null;
-      }).filter(Boolean);
+    /* ---- listen mode: the phone's voice reads sentence by sentence ---- */
+    var playing = false, speed = 1, withTrans = false, listenTimer = null, listenToken = 0;
+    var SPEEDS = [0.8, 1, 1.2, 1.5];
+    var synth = window.speechSynthesis;
+    var koVoice = null;
+    function pickVoice() {
+      if (!synth) { return; }
+      var v = synth.getVoices();
+      for (var i = 0; i < v.length; i++) { if (/^ko/i.test(v[i].lang)) { koVoice = v[i]; return; } }
     }
-    function savedRowHtml(e) {
+    if (synth) { pickVoice(); synth.onvoiceschanged = pickVoice; }
+    function showCaption() {
+      if (!captionEl) { return; }
+      captionEl.textContent = withTrans ? (TRANS[beam] || '') : '';
+      captionEl.classList.toggle('is-on', mode === 'listen' && withTrans);
+    }
+    function stopSpeech() {
+      listenToken++;
+      clearTimeout(listenTimer);
+      if (synth) { synth.cancel(); }
+    }
+    function speakCurrent() {
+      var token = ++listenToken;
+      var text = sentences[beam].textContent;
+      var advance = function () {
+        if (token !== listenToken || !playing) { return; }
+        if (beam >= sentences.length - 1) { setPlaying(false); return; }
+        setBeam(beam + 1);
+        speakCurrent();
+      };
+      if (synth && koVoice) {
+        var u = new SpeechSynthesisUtterance(text);
+        u.voice = koVoice; u.lang = koVoice.lang; u.rate = speed;
+        u.onend = function () { listenTimer = setTimeout(advance, 250); };
+        u.onerror = function () { listenTimer = setTimeout(advance, 250); };
+        synth.speak(u);
+      } else {
+        // no Korean voice in this browser: step through at a reading pace
+        listenTimer = setTimeout(advance, (900 + text.length * 95) / speed);
+      }
+    }
+    function setPlaying(on) {
+      playing = on;
+      listenbar.classList.toggle('is-playing', on);
+      var play = listenbar.querySelector('[data-listen="play"]');
+      play.setAttribute('aria-label', on ? 'Pause' : 'Play');
+      stopSpeech();
+      if (on) { speakCurrent(); }
+    }
+    listenbar.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-listen]');
+      if (!b) { return; }
+      var act = b.getAttribute('data-listen');
+      if (act === 'play') { setPlaying(!playing); }
+      else if (act === 'prev' || act === 'next') {
+        setBeam(beam + (act === 'next' ? 1 : -1));
+        if (playing) { stopSpeech(); speakCurrent(); }
+      } else if (act === 'speed') {
+        speed = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length];
+        speedEl.textContent = speed.toFixed(1) + '×';
+        if (playing) { stopSpeech(); speakCurrent(); }
+      } else if (act === 'trans') {
+        withTrans = !withTrans;
+        b.setAttribute('aria-pressed', withTrans ? 'true' : 'false');
+        showCaption();
+      } else if (act === 'close') { setMode('read'); }
+    });
+
+    /* ---- your-words panel: saved + suggested + learned ---- */
+    function savedRowHtml(id) {
+      var e;
+      if (WORDS[id]) { e = { hw: WORDS[id].hw, hanja: WORDS[id].hanja, gloss: WORDS[id].def }; }
+      else { CANDIDATES.forEach(function (x) { if (x.id === id) { e = x; } }); }
+      if (!e) { return ''; }
+      var step = fade[id] || 0, dots = '';
+      for (var i = 0; i < 6; i++) { dots += '<i class="' + (i < step ? 'off' : '') + '"></i>'; }
       return '<div class="wv-row"><div class="wv-row__top"><span class="k">' + e.hw + '</span>' +
         (e.hanja ? '<span class="h">' + e.hanja + '</span>' : '') +
-        '<span class="m">' + e.gloss + '</span></div>' +
+        '<span class="m">' + e.gloss + '</span><span class="wv-steps" title="Fades a step each page you read past it">' + dots + '</span></div>' +
         '<div class="src">from 날개</div></div>';
     }
     function candCardHtml(c) {
-      var isSaved = !!candSaved[c.id];
+      var s = !!candSaved[c.id];
       var idx = c.sentence.indexOf(c.hw);
       var sent = idx === -1 ? c.sentence
         : c.sentence.slice(0, idx) + '<b>' + c.hw + '</b>' + c.sentence.slice(idx + c.hw.length);
@@ -431,33 +504,38 @@
         '<span class="wv-badge">' + c.reason + '</span></div>' +
         '<div class="m">' + c.gloss + '</div>' +
         '<p class="wv-card__sentence">' + sent + '</p>' +
-        '<button class="wv-card__save' + (isSaved ? ' is-saved' : '') + '" type="button" data-cand="' + c.id + '"' +
-        (isSaved ? ' disabled' : '') + '>' + (isSaved ? '✓ SAVED' : 'SAVE') + '</button></div>';
+        '<button class="wv-card__save' + (s ? ' is-saved' : '') + '" type="button" data-cand="' + c.id + '"' +
+        (s ? ' disabled' : '') + '>' + (s ? '✓ Saved' : 'Save') + '</button></div>';
     }
     function renderWords() {
       wordsTabs.forEach(function (t) {
         var on = t.getAttribute('data-wtab') === wtab;
         t.classList.toggle('is-active', on);
         t.setAttribute('aria-selected', on ? 'true' : 'false');
+        if (t.getAttribute('data-wtab') === 'learned') { t.textContent = 'Learned ' + learned.length; }
       });
       if (!wordsBody) { return; }
       if (wtab === 'saved') {
-        var entries = savedEntries();
-        wordsBody.innerHTML = entries.length
-          ? entries.map(savedRowHtml).join('') +
-            '<p class="wv-note">Words you save while reading land here, with the book they came from.</p>'
-          : '<p class="wv-note">Nothing saved yet — tap a word in the reader and hit SAVE.</p>';
-      } else {
+        wordsBody.innerHTML = savedList.length
+          ? savedList.map(savedRowHtml).join('') +
+            '<p class="wv-note">Each saved word fades a step every page you read past it. After six, it moves to Learned.</p>'
+          : '<p class="wv-note">Nothing saved yet — tap a word in the reader and hit Save.</p>';
+      } else if (wtab === 'suggested') {
         wordsBody.innerHTML =
-          '<p class="wv-note">Picked from this book, for you: words the app isn\'t sure you know — and that the story is too sparing with to teach on its own. The list refreshes daily.</p>' +
+          '<p class="wv-note">Picked from this book, for you: words the app isn\'t sure you know — and that the story is too sparing with to teach on its own.</p>' +
           CANDIDATES.map(candCardHtml).join('');
+      } else {
+        wordsBody.innerHTML = learned.map(function (e) {
+          return '<div class="wv-row"><div class="wv-row__top"><span class="k">' + e.hw + '</span>' +
+            (e.hanja ? '<span class="h">' + e.hanja + '</span>' : '') + '<span class="m">' + e.gloss + '</span></div></div>';
+        }).join('') + '<p class="wv-note">These faded out while you read.</p>';
       }
     }
 
     /* ---- modes ---- */
-    var wordsBtn = reader.querySelector('.reader__words-btn');
     function setMode(m) {
       var prev = mode;
+      if (prev === 'listen' && m !== 'listen') { setPlaying(false); }
       mode = m;
       reader.setAttribute('data-mode', m);
       tabs.forEach(function (t) {
@@ -467,17 +545,21 @@
       });
       if (focusBtn) { focusBtn.setAttribute('aria-pressed', m === 'focus' ? 'true' : 'false'); }
       if (wordsBtn) { wordsBtn.setAttribute('aria-pressed', m === 'words' ? 'true' : 'false'); }
-      if (m === 'focus') {
-        if (prev !== 'focus') { setBeam(firstSentenceOfPage(page)); positionBeam(true); }
+      if (listenBtn) { listenBtn.setAttribute('aria-pressed', m === 'listen' ? 'true' : 'false'); }
+      if (prev === 'focus' && m !== 'focus') {
+        // hand the paged reader the page the beam ended on
+        var p = pageIndexOf(beam);
+        if (p !== -1) { page = p; }
+        viewport.scrollTop = 0;
+      }
+      if (m === 'focus' || m === 'listen') {
+        if (prev !== 'focus' && prev !== 'listen') { beam = firstSentenceOfPage(page); }
+        setBeam(beam);
+        if (m === 'focus') { positionBeam(true); }
       } else {
-        if (prev === 'focus') {
-          // hand the paged reader the page the beam ended on
-          var p = pageIndexOf(beam);
-          if (p !== -1) { page = p; }
-          viewport.scrollTop = 0;
-        }
         clearBeam();
       }
+      if (m !== 'listen') { showCaption(); }
       if (m === 'words') { renderWords(); }
       if (hintEl && HINTS[m]) { hintEl.innerHTML = HINTS[m]; }
       setPage(page);
@@ -486,17 +568,19 @@
 
     /* ---- events ---- */
     track.addEventListener('click', function (e) {
+      if (suppressClick) { suppressClick = false; return; }
       var w = e.target.closest('.rw');
       var s = e.target.closest('.rs');
       if (w) {
         e.preventDefault();
-        if (mode === 'focus' && s) { setBeam(Array.prototype.indexOf.call(sentences, s)); }
-        openWord(w.getAttribute('data-word'), 'define');
+        if (s && (mode === 'focus' || mode === 'listen')) { setBeam(Array.prototype.indexOf.call(sentences, s)); }
+        openWord(w.getAttribute('data-word'), 'define', w);
         return;
       }
-      if (mode === 'focus' && s) {
+      if (s && (mode === 'focus' || mode === 'listen')) {
         closeSheet();
         setBeam(Array.prototype.indexOf.call(sentences, s));
+        if (mode === 'listen' && playing) { stopSpeech(); speakCurrent(); }
       }
     });
 
@@ -521,6 +605,7 @@
         if (candSaved[id]) { return; }
         candSaved[id] = true;
         savedList.unshift(id);
+        paintMarks();
         renderWords();
       });
     }
@@ -530,48 +615,44 @@
       if (!el) { return; }
       var act = el.getAttribute('data-act');
       if (act === 'close') { closeSheet(); return; }
+      if (!current) { return; }
       if (act === 'save') {
-        if (current) {
-          saved[current] = !saved[current];
-          var pos = savedList.indexOf(current);
-          if (saved[current] && pos === -1) { savedList.unshift(current); }
-          if (!saved[current] && pos !== -1) { savedList.splice(pos, 1); }
-          VIEWS[currentView()](current);
-        }
+        var pos = savedList.indexOf(current);
+        if (pos === -1) { savedList.unshift(current); fade[current] = 0; }
+        else { savedList.splice(pos, 1); delete fade[current]; }
+        paintMarks();
+        render();
         return;
       }
-      if (!current) { return; }
-      if (act === 'meaning') { renderAi(current); }
-      else if (act === 'translate') { renderTranslate(current); }
-      else if (act === 'roots') { renderRoots(current); }
-      else if (act === 'define') { renderDefine(current); }
+      if (act === 'handle') { view = view === 'roots' ? 'define' : 'roots'; rootOn = view === 'roots' ? 0 : -1; }
+      else if (act === 'char') { view = 'roots'; rootOn = Number(el.getAttribute('data-i')); }
+      else if (act === 'meaning') { view = view === 'ai' ? 'define' : 'ai'; }
+      else if (act === 'translate') { view = view === 'translate' ? 'define' : 'translate'; }
+      render();
     });
-    // remember which view is showing so SAVE re-renders in place
-    function currentView() {
-      if (sheet.querySelector('.sheet__ai-slot')) { return 'ai'; }
-      if (sheet.querySelector('.sheet__roots')) { return 'roots'; }
-      if (sheet.querySelector('.sheet__actions .is-active[data-act="translate"]')) { return 'translate'; }
-      return 'define';
-    }
 
     scrim.addEventListener('click', closeSheet);
     if (prevBtn) { prevBtn.addEventListener('click', function () { closeSheet(); setPage(page - 1); }); }
     if (nextBtn) { nextBtn.addEventListener('click', function () { closeSheet(); setPage(page + 1); }); }
     if (focusBtn) { focusBtn.addEventListener('click', function () { setMode(mode === 'focus' ? 'read' : 'focus'); }); }
+    if (listenBtn) { listenBtn.addEventListener('click', function () { setMode(mode === 'listen' ? 'read' : 'listen'); }); }
     if (wordsBtn) { wordsBtn.addEventListener('click', function () { setMode(mode === 'words' ? 'read' : 'words'); }); }
 
     tabs.forEach(function (t) {
       t.addEventListener('click', function () { setMode(t.getAttribute('data-mode')); });
     });
 
-    /* ---- pointer: swipe to page (or beam), long-press to translate ---- */
-    var sx = 0, sy = 0, st = 0, onWord = false, moved = false, lp = null;
+    /* ---- pointer: swipe to page (or beam), press and hold to select a sentence ---- */
+    var sx = 0, sy = 0, onWord = false, moved = false, lp = null, suppressClick = false;
     viewport.addEventListener('pointerdown', function (e) {
-      sx = e.clientX; sy = e.clientY; st = Date.now(); moved = false;
+      sx = e.clientX; sy = e.clientY; moved = false; suppressClick = false;
       onWord = !!e.target.closest('.rw');
+      var s = e.target.closest('.rs');
       clearTimeout(lp);
-      if (!onWord && mode !== 'words') {
-        lp = setTimeout(function () { if (!moved) { moved = true; openSentence(); } }, 500);
+      if (s && mode === 'read') {
+        lp = setTimeout(function () {
+          if (!moved) { moved = true; suppressClick = true; openSentence(Array.prototype.indexOf.call(sentences, s)); }
+        }, 500);
       }
     });
     viewport.addEventListener('pointermove', function (e) {
@@ -583,11 +664,12 @@
       var dx = e.clientX - sx, dy = e.clientY - sy;
       if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy)) {
         closeSheet();
-        if (mode === 'focus') { setBeam(dx < 0 ? beam + 1 : beam - 1); }
+        if (mode === 'focus' || mode === 'listen') { setBeam(dx < 0 ? beam + 1 : beam - 1); }
         else { setPage(dx < 0 ? page + 1 : page - 1); }
       }
     });
     viewport.addEventListener('pointercancel', function () { clearTimeout(lp); });
+    viewport.addEventListener('contextmenu', function (e) { e.preventDefault(); });
 
     /* ---- side guide triggers ---- */
     var narrow = window.matchMedia('(max-width: 899px)');
@@ -600,12 +682,14 @@
       var run = function () {
         var demo = item.getAttribute('data-demo');
         if (demo === 'focus') { setMode(mode === 'focus' ? 'read' : 'focus'); flashGuide(item); return; }
+        if (demo === 'listen') { setMode('listen'); flashGuide(item); return; }
         if (demo === 'words') { setMode('words'); flashGuide(item); return; }
         if (mode !== 'read') { setMode('read'); }
         if (demo === 'define') { openWord('cheonjae', 'define'); }
         else if (demo === 'roots') { openWord('cheonjae', 'roots'); }
         else if (demo === 'ai') { openWord('cheonjae', 'ai'); }
-        else if (demo === 'translate') { openSentence(); }
+        else if (demo === 'translate') { openSentence(0); }
+        else if (demo === 'fade') { closeSheet(); setPage(page === 0 ? 1 : 0); }
         flashGuide(item);
       };
       item.addEventListener('click', run);
@@ -615,6 +699,7 @@
     });
 
     /* init */
+    paintMarks();
     setMode('read');
     setPage(0);
   })();
